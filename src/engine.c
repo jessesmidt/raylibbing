@@ -1,79 +1,66 @@
-#include "raylib.h"
 #include "engine.h"
-
-// Player
-
-typedef struct {
-    Vector3 position;
-    Vector3 velocity;
-    Color   color;
-} Player;
-
-void UpdatePlayer(Player *p)
-{
-    p->position.x += p->velocity.x;
-}
-
-void DrawPlayer(Player p)
-{
-    DrawCube(p.position, 1, 1, 1, BLUE);
-}
-
-// Game Object (used for floor)
+#include "player.h"
+#include "map.h"
+#include <math.h>
 
 typedef struct {
-    Vector3 position;
-    Vector3 size;
-    Color   color;
-} GameObject;
-
-void DrawGameObject(GameObject obj)
-{
-    DrawCube(obj.position, obj.size.x, obj.size.y, obj.size.z, obj.color);
-}
-
-typedef struct {
-    Camera3D    camera;
-    GameObject  floor;
-    Player      cube;
+    Camera3D camera;
+    Map      map;
+    Player   cube;
+    float    yaw;
+    float    pitch;
 } EngineState;
 
 static EngineState state;
 
-void init() {
-    state.camera.position = (Vector3){ 0, 2, 6 };
-    state.camera.target   = (Vector3){ 0, 1, 0 };
-    state.camera.up       = (Vector3){ 0, 1, 0 };
-    state.camera.fovy     = 60.0f;
+void init()
+{
+    state.camera.position   = (Vector3){ 0, 12, 6 };
+    state.camera.target     = (Vector3){ 0, 11, 0 };
+    state.camera.up         = (Vector3){ 0,  1, 0 };
+    state.camera.fovy       = 60.0f;
     state.camera.projection = CAMERA_PERSPECTIVE;
 
-    state.floor = (GameObject){
-        .position = (Vector3){0, 0, 0},
-        .size     = (Vector3){10, 1, 10},
-        .color    = LIGHTGRAY
-    };
+    MapAdd(&state.map, (Vector3){  0, 10, 0 }, (Vector3){ 10, 1, 10 }, LIGHTGRAY);
+    MapAdd(&state.map, (Vector3){ 12, 10, 0 }, (Vector3){ 10, 1, 10 }, LIGHTGRAY);
 
     state.cube = (Player){
-        .position = (Vector3){-4, 2, 0},
-        .velocity = (Vector3){0.05f, 0.0f, 0.0f},
-        .color    = RED
+        .position = (Vector3){ -4, 12, 0 },
+        .velocity = (Vector3){  0,  0, 0 },
     };
 
+    state.yaw   = 0.0f;
+    state.pitch = 0.4f;
+
     InitWindow(800, 600, "raylib + python");
+    DisableCursor();
 }
 
-void update(EngineState *e)
+void update()
 {
-    BeginDrawing();
-    ClearBackground(RAYWHITE);
-    DrawText("hello from C", 200, 200, 20, BLACK);
-    BeginMode3D(state.camera);
-    DrawGameObject(state.floor);
-    DrawPlayer(state.cube);
-    UpdatePlayer(&state.cube);
-    DrawFPS(10, 10);
+    UpdatePlayer(&state.cube, state.yaw, &state.map);
 
+    Vector2 delta = GetMouseDelta();
+    state.yaw   -= delta.x * 0.003f;
+    state.pitch += delta.y * 0.003f;
+    if (state.pitch >  1.4f) state.pitch =  1.4f;
+    if (state.pitch < -1.4f) state.pitch = -1.4f;
+
+    float dist = 6.0f;
+    state.camera.position = (Vector3){
+        state.cube.position.x + dist * sinf(state.yaw) * cosf(state.pitch),
+        state.cube.position.y + dist * sinf(state.pitch),
+        state.cube.position.z + dist * cosf(state.yaw) * cosf(state.pitch)
+    };
+    state.camera.target = state.cube.position;
+
+    BeginDrawing();
+    ClearBackground(GRAY);
+    BeginMode3D(state.camera);
+    DrawMap(&state.map);
+    DrawPlayer(state.cube);
     EndMode3D();
+    DrawFPS(10, 10);
     EndDrawing();
 }
 

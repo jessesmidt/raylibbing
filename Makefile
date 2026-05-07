@@ -1,12 +1,9 @@
-CC=gcc
-CFLAGS=-Wall -fPIC -Iinclude
-LDFLAGS=-shared -lraylib -lX11 -lm -lpthread -ldl
+CC     = gcc
+CFLAGS = -Wall -Iinclude -I/usr/include/lua5.4
+LDFLAGS= -lraylib -lX11 -lm -lpthread -ldl -llua5.4
 
-PYTHON := python3
-SCRIPT = scripts/test.py
-
-SRC=$(wildcard src/*.c)
-OUT=build/libengine.so
+SRC = $(wildcard src/*.c)
+OUT = build/dieding
 
 all:
 	mkdir -p build
@@ -16,4 +13,4 @@ clean:
 	rm -rf build
 
 run:
-	$(PYTHON) $(SCRIPT)
+	./build/dieding

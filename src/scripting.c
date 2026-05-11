@@ -9,13 +9,14 @@ static lua_State *L;
 
 static int l_map_add_tile(lua_State *L)
 {
-    float x  = luaL_checknumber(L, 1);
-    float y  = luaL_checknumber(L, 2);
-    float z  = luaL_checknumber(L, 3);
-    float sx = luaL_checknumber(L, 4);
-    float sy = luaL_checknumber(L, 5);
-    float sz = luaL_checknumber(L, 6);
-    engine_map_add_tile(x, y, z, sx, sy, sz);
+    float x      = luaL_checknumber(L, 1);
+    float y      = luaL_checknumber(L, 2);
+    float z      = luaL_checknumber(L, 3);
+    float sx     = luaL_checknumber(L, 4);
+    float sy     = luaL_checknumber(L, 5);
+    float sz     = luaL_checknumber(L, 6);
+    int   solid  = (int)luaL_optinteger(L, 7, 1);
+    engine_map_add_tile(x, y, z, sx, sy, sz, solid);
     return 0;
 }
 

@@ -1,9 +1,9 @@
 #include "map.h"
 
-void MapAdd(Map *m, Vector3 pos, Vector3 size, Color color)
+void MapAdd(Map *m, Vector3 pos, Vector3 size, Color color, int solid)
 {
     if (m->count >= MAX_TILES) return;
-    m->tiles[m->count++] = (GameObject){ pos, size, color };
+    m->tiles[m->count++] = (GameObject){ pos, size, color, solid };
 }
 
 void DrawMap(Map *m)

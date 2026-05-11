@@ -9,6 +9,7 @@ typedef struct {
     Vector3 position;
     Vector3 size;
     Color   color;
+    int     solid;
 } GameObject;
 
 typedef struct {
@@ -16,7 +17,7 @@ typedef struct {
     int        count;
 } Map;
 
-void MapAdd(Map *m, Vector3 pos, Vector3 size, Color color);
+void MapAdd(Map *m, Vector3 pos, Vector3 size, Color color, int solid);
 void DrawMap(Map *m);
 
 #endif

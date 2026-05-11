@@ -20,9 +20,9 @@ typedef struct {
 
 static EngineState state;
 
-void engine_map_add_tile(float x, float y, float z, float sx, float sy, float sz)
+void engine_map_add_tile(float x, float y, float z, float sx, float sy, float sz, int solid)
 {
-    MapAdd(&state.map, (Vector3){x, y, z}, (Vector3){sx, sy, sz}, LIGHTGRAY);
+    MapAdd(&state.map, (Vector3){x, y, z}, (Vector3){sx, sy, sz}, LIGHTGRAY, solid);
 }
 
 void engine_set_player_spawn(float x, float y, float z)
